@@ -32,7 +32,7 @@
     import * as THREE from 'three';
     import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
     import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
-    import { Water } from 'three/addons/objects/Water2.js';
+    import { Sky } from 'three/addons/objects/Sky.js';
 
     function main() {
 
@@ -47,42 +47,30 @@
         camera.position.set( 0, 10, 20 );
 
         class MinMaxGUIHelper {
-
             constructor( obj, minProp, maxProp, minDif ) {
-
                 this.obj = obj;
                 this.minProp = minProp;
                 this.maxProp = maxProp;
                 this.minDif = minDif;
-
             }
             get min() {
-
                 return this.obj[ this.minProp ];
-
             }
             set min( v ) {
-
                 this.obj[ this.minProp ] = v;
                 this.obj[ this.maxProp ] = Math.max( this.obj[ this.maxProp ], v + this.minDif );
-
             }
             get max() {
-
                 return this.obj[ this.maxProp ];
-
             }
             set max( v ) {
-
                 this.obj[ this.maxProp ] = v;
                 this.min = this.min; // this will call the min setter
-
             }
 
         }
-
+        
         function updateCamera() {
-
             camera.updateProjectionMatrix();
 
         }
@@ -94,10 +82,43 @@
 
         // background color
         const scene = new THREE.Scene();
-        scene.background = new THREE.Color(0x080824);
-
+        //scene.background = new THREE.Color(0x080824);
+        // Add Sky
+        let sky, sun;
         {
+        sky = new Sky();
+        sky.scale.setScalar( 450000 );
+        scene.add( sky );
 
+        sun = new THREE.Vector3();
+
+        /// GUI
+        const effectController = {
+            turbidity: .1,
+            rayleigh: .017,
+            mieCoefficient: .002,
+            mieDirectionalG: 0.766,
+            elevation: 10.3,
+            azimuth: 180,
+            exposure: renderer.toneMappingExposure
+            }
+        const uniforms = sky.material.uniforms;
+            uniforms[ 'turbidity' ].value = effectController.turbidity;
+            uniforms[ 'rayleigh' ].value = effectController.rayleigh;
+            uniforms[ 'mieCoefficient' ].value = effectController.mieCoefficient;
+            uniforms[ 'mieDirectionalG' ].value = effectController.mieDirectionalG;
+        const phi = THREE.MathUtils.degToRad( 90 - effectController.elevation );
+        const theta = THREE.MathUtils.degToRad( effectController.azimuth );
+
+        sun.setFromSphericalCoords( 1, phi, theta );
+
+        uniforms[ 'sunPosition' ].value.copy( sun );
+
+        renderer.toneMappingExposure = effectController.exposure;
+        renderer.render( scene, camera );
+        }
+        //sphere
+        {
             const sphereRadius = 3;
             const sphereWidthDivisions = 32;
             const sphereHeightDivisions = 16;
@@ -109,6 +130,8 @@
 
         }
 
+        /*
+        //plane
             const planeSize = 100;
 
             const loader = new THREE.TextureLoader();
@@ -130,9 +153,9 @@
             const mesh = new THREE.Mesh( planeGeo, planeMat );
             mesh.rotation.x = Math.PI * - .5;
             scene.add( mesh );
+*/
 
-
-                    //light on objects
+        //light on objects
         {
             const color = 0xFFFFFF;
             const intensity = .5;
@@ -146,6 +169,7 @@
             //scene.add( light.target );
 
         }
+
         function resizeRendererToDisplaySize( renderer ) {
             const canvas = renderer.domElement;
             const width = canvas.clientWidth;
