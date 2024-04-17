@@ -7,7 +7,7 @@
   </head>
   <!-- loading canvas tag -->
   <body>
-    <canvas id="c"></canvas>
+    <canvas id="c" width="400" height="200"></canvas>
   </body>
   <script type="importmap">
     {
@@ -53,61 +53,24 @@
         const boxDepth=1;
         const geometry = new THREE.BoxGeometry(boxWidth,boxHeight,boxDepth);
         
-       /*//create a material and color
+       //create a material and color
         //const material = new THREE.MeshBasicMaterial({color: 0x44aa88});
-        const material = new THREE.MeshPhongMaterial({color: 0x44aa88});  // greenish blue
+        //const material = new THREE.MeshPhongMaterial({color: 0x44aa88});  // greenish blue
 
+        //adding texture:
+        const loader = new THREE.TextureLoader();
+        const texture = loader.load( 'bonsaipic1.jpg' );
+        texture.colorSpace = THREE.SRGBColorSpace;
+
+        const material = new THREE.MeshBasicMaterial({map: texture});
         //create a mesh which is a shape of object, material, and position 
         const cube = new THREE.Mesh(geometry, material);
         
         //adding cube mesh to scene
-        scene.add(cube);*/
+        scene.add(cube);
 
-        // function to create a new material with different color and sets at x position
-        function makeInstance( geometry, color, x ) {
-
-            const material = new THREE.MeshPhongMaterial( { color } );
-
-            const cube = new THREE.Mesh( geometry, material );
-            scene.add( cube );
-
-            cube.position.x = x;
-
-            return cube;
-
-        }
-
-        //calling 3 instances of function cube
-        const cubes = [
-            makeInstance( geometry, 0x44aa88, 0 ),
-            makeInstance( geometry, 0x8844aa, - 2 ),
-            makeInstance( geometry, 0xaa8844, 2 ),
-        ];
-
-        // spin all 3 cubes in render with slightly different rotation
-        function render( time ) {
-
-            time *= 0.001; // convert time to seconds
-
-            cubes.forEach( ( cube, ndx ) => {
-
-                const speed = 1 + ndx * .1;
-                const rot = time * speed;
-                cube.rotation.x = rot;
-                cube.rotation.y = rot;
-
-            } );
-
-            renderer.render( scene, camera );
-
-            requestAnimationFrame( render );
-
-        }
-
-        requestAnimationFrame( render );
-
-        }
-        /*//render the scene by calling render function and passing our scene and camera
+        
+        //render the scene by calling render function and passing our scene and camera
         //renderer.render(scene,camera);
 
         //rendering it spinning
@@ -124,7 +87,7 @@
         //request browser to animate something more dynamically
         requestAnimationFrame(render);
 
-    }*/
+    }
     main();
   </script>
 </html>
