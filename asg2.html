@@ -1,0 +1,34 @@
+<!-- loading three.js -->
+<script type="module">
+    import * as THREE from 'three';
+
+    // drawing into the canvas
+    function main(){
+        const canvas=document.querySelector('#c');
+        // assign canvas and then create a WebGLRenderer
+        const renderer= new THREE.WebGLRenderer({antialias:true, canvas})
+
+        // create a PerspectiveCamera
+        const fov = 75; // field of view (75 degrees in the vertical dimension)
+        const aspect = 2;  // the canvas default --- display aspect (in this case 300/150 or 2)
+        const near = 0.1; // frustrum starts .1 from front 
+        const far = 5; // ends 5 units from the front
+        const camera = new THREE.PerspectiveCamera(fov, aspect, near, far); // define the shape frustrum
+
+        // moving the camera slighly back
+        camera.position.z=2;
+
+        //making a scene
+        //roof of a form of scene graph
+        const scene=new THREE.Scene();
+        //
+
+
+
+    }
+</script>
+
+<!-- loading canvas tag -->
+<body>
+    <canvas id="c"></canvas>
+</body>
