@@ -60,6 +60,8 @@
 		const scene = new THREE.Scene();
 		const waterGeometry = new THREE.PlaneGeometry( 10000, 10000 );
         let water;
+
+		//had to tweak it to be how I wanted, but got a lot of help from this source code https://threejs.org/examples/webgl_shaders_ocean.html
         water = new Water(
             waterGeometry,
             {
@@ -83,7 +85,6 @@
 
         scene.add( water );
 
-		//scene.background = new THREE.Color( 'black' );
 		
 		//loading in a 3d scenery
 		{
