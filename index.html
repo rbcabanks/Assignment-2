@@ -1,149 +1,171 @@
 <!DOCTYPE html>
 <html>
-  <head>
-    <meta charset="utf-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
-    <title>Three.js - Fundamentals with light</title>
-  </head>
-  <style>
-    html, body {
-    height: 100%;
-    margin: 0;
-    }
-    #c {
-    width: 100%;
-    height: 100%;
-    display: block;
-    }
-    </style>
 
-  <body>
-    <canvas id="c" ></canvas>
-  </body>
-    <script  type="importmap">{
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+	<title>Three.js - Fundamentals with light</title>
+</head>
+<style>
+	html,
+	body {
+		height: 100%;
+		margin: 0;
+	}
+
+	#c {
+		width: 100%;
+		height: 100%;
+		display: block;
+	}
+</style>
+
+<body>
+	<canvas id="c"></canvas>
+</body>
+<script type="importmap">{
         "imports": {
             "three": "https://threejs.org/build/three.module.js",
             "three/addons/": "https://threejs.org/examples/jsm/"
         }
         }
     </script>
-	<script type="module">
-		import * as THREE from 'three';
-		import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
-		import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
-		import { Water } from 'three/addons/objects/Water.js';
+<script type="module">
+	import * as THREE from 'three';
+	import { OrbitControls } from 'three/addons/controls/OrbitControls.js';
+	import { GUI } from 'three/addons/libs/lil-gui.module.min.js';
+	import { Water } from 'three/addons/objects/Water.js';
+	import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
+	import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 
-		function main() {
 
-		const canvas = document.querySelector( '#c' );
+	function main() {
+
+		const canvas = document.querySelector('#c');
 		//const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
 		// want to use skybox 
-		const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
+		const renderer = new THREE.WebGLRenderer({ antialias: true, canvas });
 
 
 		const fov = 100;
 		const aspect = 2; // the canvas default
 		const near = 0.1;
-		const far = 10000;
-		const camera = new THREE.PerspectiveCamera( fov, aspect, near, far );
-		camera.position.set( 0, 10, 20 );
-
+		const far = 1000;
+		const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
+		camera.position.set(-30, 15, 10);
 		// using example from "cameras" as a basic guide
 		function updateCamera() {
 			camera.updateProjectionMatrix();
 		}
 
-		const controls = new OrbitControls( camera, canvas );
-		controls.target.set( 0, 10, 15 );
+		const controls = new OrbitControls(camera, canvas);
+		controls.target.set(0, 10, 15);
+		controls.maxDistance = 100;
 		controls.update();
 
 		const scene = new THREE.Scene();
-		const waterGeometry = new THREE.PlaneGeometry( 10000, 10000 );
-        let water;
+		const waterGeometry = new THREE.PlaneGeometry(10000, 10000);
+		let water;
 
 		//had to tweak it to be how I wanted, but got a lot of help from this source code https://threejs.org/examples/webgl_shaders_ocean.html
-        water = new Water(
-            waterGeometry,
-            {
-                textureWidth: 10000,
-                textureHeight: 10000,
-                waterNormals: new THREE.TextureLoader().load( 'waternormals.jpg', function ( texture ) {
+		water = new Water(
+			waterGeometry,
+			{
+				textureWidth: 512,
+				textureHeight: 512,
+				waterNormals: new THREE.TextureLoader().load('waternormals.jpg', function (texture) {
 
-                    texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
+					texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 
-                } ),
-                
-                sunDirection: new THREE.Vector3(),
-                sunColor: 0xffffff,
-                waterColor: 0x001e0f,
-                distortionScale: 3.7,
-                fog: scene.fog !== undefined
-            }
-        );
+				}),
 
-        water.rotation.x = - Math.PI / 2;
+				sunDirection: new THREE.Vector3(),
+				sunColor: 0x8B6700,
+				waterColor: 0x07071A,
+				distortionScale: 3.7,
+				fog: scene.fog !== undefined
+			}
+		);
 
-        scene.add( water );
+		water.rotation.x = - Math.PI / 2;
 
-		
+		scene.add(water);
+
+
 		//loading in a 3d scenery
 		{
-		const loader = new THREE.CubeTextureLoader();
-		const texture = loader.load([
-			'cubemap/pano_r.jpg', //pos-x
-			'cubemap/pano_l.jpg', //neg-x
+			const loader = new THREE.CubeTextureLoader();
+			const texture = loader.load([
+				'cubemap/pano_r.jpg', //pos-x
+				'cubemap/pano_l.jpg', //neg-x
 
-			'cubemap/pano_u.jpg', //pos-y
-			'cubemap/pano_d.jpg', //neg-y
+				'cubemap/pano_u.jpg', //pos-y
+				'cubemap/pano_d.jpg', //neg-y
 
-			'cubemap/pano_f.jpg', //pos-z
-			'cubemap/pano_b.jpg', //neg-z
-			//bfrl 
-			//sourced from https://www.utah3d.net/utah-travel/utah-waterways/starry-lake.html
-		]);
-		scene.background = texture;
+				'cubemap/pano_f.jpg', //pos-z
+				'cubemap/pano_b.jpg', //neg-z
+				//bfrl 
+				//sourced from https://www.utah3d.net/utah-travel/utah-waterways/starry-lake.html
+			]);
+			scene.background = texture;
 		}
 
-		{
+		{// drone obj and mtl. Got from this source https://www.cgtrader.com/items/2480872/download-page
+			const mtlLoader = new MTLLoader();
+			mtlLoader.load('drone.mtl', (mtl) => {
 
-			const cubeSize = 4;
-			const cubeGeo = new THREE.BoxGeometry( cubeSize, cubeSize, cubeSize );
-			const cubeMat = new THREE.MeshPhongMaterial( { color: '#8AC' } );
-			const mesh = new THREE.Mesh( cubeGeo, cubeMat );
-			mesh.position.set(0, 5, 5 );
-			scene.add( mesh );
+				mtl.preload();
+				const objLoader = new OBJLoader();
+				objLoader.setMaterials(mtl);
+				objLoader.load('drone1.obj', (root) => {
+					root.position.y = 5;
+					root.position.x = -10;
+					root.position.z = 10;
+					root.scale.set(3, 3, 3)
+					scene.add(root);
+				});
 
+			});
 		}
-
+		/*
+				{
+					const cubeSize = 4;
+					const cubeGeo = new THREE.BoxGeometry( cubeSize, cubeSize, cubeSize );
+					const cubeMat = new THREE.MeshPhongMaterial( { color: '#8AC' } );
+					const mesh = new THREE.Mesh( cubeGeo, cubeMat );
+					mesh.position.set(0, 5, 5 );
+					scene.add( mesh );
+		
+				}*/
+		//lighting
 		{
 
 			const color = 0xffeca1;
-			const intensity = 3;
+			const intensity = 2;
 			//light 1
-			const light = new THREE.DirectionalLight( color, intensity );
+			const light = new THREE.DirectionalLight(color, intensity);
 			//light 2
-			const alight = new THREE.AmbientLight(color, .1);
+			const alight = new THREE.AmbientLight(0x101647, .01);
 			//light 3
-			const hlight = new THREE.HemisphereLight(0xB1E1FF, 0x101647, .1);
+			const hlight = new THREE.HemisphereLight(0xB1E1FF, 0x101647, .01);
 			scene.add(alight);
 			scene.add(hlight);
-			light.position.set( 0, 10, 0 );
-			light.target.position.set( - 5, 0, 0 );
-			scene.add( light );
-			scene.add( light.target );
-			
+			light.position.set(0, 10, 0);
+			light.target.position.set(- 5, 0, 0);
+			scene.add(light);
+			scene.add(light.target);
 
 		}
 
-		function resizeRendererToDisplaySize( renderer ) {
+		function resizeRendererToDisplaySize(renderer) {
 
 			const canvas = renderer.domElement;
 			const width = canvas.clientWidth;
 			const height = canvas.clientHeight;
 			const needResize = canvas.width !== width || canvas.height !== height;
-			if ( needResize ) {
+			if (needResize) {
 
-				renderer.setSize( width, height, false );
+				renderer.setSize(width, height, false);
 
 			}
 
@@ -153,7 +175,7 @@
 
 		function render() {
 
-			if ( resizeRendererToDisplaySize( renderer ) ) {
+			if (resizeRendererToDisplaySize(renderer)) {
 
 				const canvas = renderer.domElement;
 				camera.aspect = canvas.clientWidth / canvas.clientHeight;
@@ -161,16 +183,15 @@
 
 			}
 
-			renderer.render( scene, camera );
+			renderer.render(scene, camera);
 
-			requestAnimationFrame( render );
+			requestAnimationFrame(render);
 
 		}
 
-		requestAnimationFrame( render );
+		requestAnimationFrame(render);
 
 	}
 
 	main();
-	</script>
-	
+</script>
