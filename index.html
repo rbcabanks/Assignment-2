@@ -110,20 +110,28 @@
 			const cubeGeo = new THREE.BoxGeometry( cubeSize, cubeSize, cubeSize );
 			const cubeMat = new THREE.MeshPhongMaterial( { color: '#8AC' } );
 			const mesh = new THREE.Mesh( cubeGeo, cubeMat );
-			mesh.position.set( cubeSize + 1, cubeSize / 2, 0 );
+			mesh.position.set(0, 5, 5 );
 			scene.add( mesh );
 
 		}
 
 		{
 
-			const color = 0xFFFFFF;
+			const color = 0xffeca1;
 			const intensity = 3;
+			//light 1
 			const light = new THREE.DirectionalLight( color, intensity );
+			//light 2
+			const alight = new THREE.AmbientLight(color, .1);
+			//light 3
+			const hlight = new THREE.HemisphereLight(0xB1E1FF, 0x101647, .1);
+			scene.add(alight);
+			scene.add(hlight);
 			light.position.set( 0, 10, 0 );
 			light.target.position.set( - 5, 0, 0 );
 			scene.add( light );
 			scene.add( light.target );
+			
 
 		}
 
