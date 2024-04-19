@@ -52,14 +52,14 @@
 		const near = 1;
 		const far = 20000;
 		const camera = new THREE.PerspectiveCamera(fov, aspect, near, far);
-		camera.position.set(-120, 20, 130);
+		camera.position.set(-50, 50, 90);
 		// using example from "cameras" as a basic guide
 		function updateCamera() {
 			camera.updateProjectionMatrix();
 		}
 
 		const controls = new OrbitControls(camera, canvas);
-		controls.target.set(50, 5, 0);
+		controls.target.set(-5, 10, 0);
 		// got help with formatting the camera above the water from this example"https://github.com/mrdoob/three.js/blob/dev/examples/webgl_shaders_ocean.html" 
 		controls.maxPolarAngle = Math.PI * 0.495;
 		//controls.minDistance = 40.0;
@@ -81,10 +81,10 @@
 					texture.wrapS = texture.wrapT = THREE.RepeatWrapping;
 
 				}),
-
-				sunDirection: new THREE.Vector3(),
+				
+				//sunDirection: new THREE.Vector3(),
 				sunColor: 0x8B6700,
-				waterColor: 0x07071A,
+				waterColor: 0x000000,
 				distortionScale: 3.7,
 				fog: scene.fog !== undefined
 			}
@@ -121,24 +121,10 @@
 				objLoader.setMaterials(mtl);
 				objLoader.load('drone.obj', (root) => {
 					root.position.y = 5;
-					root.position.x = 50;
-					root.scale.set(40, 40, 40);
+					root.position.x = -5;
+					root.position.z = -10;
+					root.scale.set(25, 25, 25)
 					scene.add(root);
-
-					/*// compute the box that contains all the stuff
-					// from root and below
-					const box = new THREE.Box3().setFromObject( root );
-
-					const boxSize = box.getSize( new THREE.Vector3() ).length();
-					const boxCenter = box.getCenter( new THREE.Vector3() );
-
-					// set the camera to frame the box
-					frameArea( boxSize * 1, boxSize, boxCenter, camera );
-
-					// update the Trackball controls to handle the new size
-					controls.maxDistance = boxSize * 10;
-					controls.target.copy( boxCenter );
-					controls.update();*/
 				});
 
 			});
@@ -198,9 +184,9 @@
 				camera.updateProjectionMatrix();
 
 			}
-
+			//makes water move.. got help from this example https://github.com/mrdoob/three.js/blob/dev/examples/webgl_shaders_ocean.html
+			water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
 			renderer.render(scene, camera);
-
 			requestAnimationFrame(render);
 
 		}
