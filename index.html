@@ -91,9 +91,7 @@
 		);
 
 		water.rotation.x = - Math.PI / 2;
-
 		scene.add(water);
-
 
 		//loading in a 3d scenery
 		{
@@ -129,31 +127,89 @@
 
 			});
 		}
-		/*
-				{
-					const cubeSize = 4;
-					const cubeGeo = new THREE.BoxGeometry( cubeSize, cubeSize, cubeSize );
-					const cubeMat = new THREE.MeshPhongMaterial( { color: '#8AC' } );
-					const mesh = new THREE.Mesh( cubeGeo, cubeMat );
-					mesh.position.set(0, 5, 5 );
-					scene.add( mesh );
 		
-				}*/
+		// the 20+ cubes or other shapes
+		let cube,cube1,cube2,cube3,cube4,cube5,cube6,cube7,cube8,cube9,cube10,cube11;
+			//creating propellers 
+			{
+				const cubeSize = .5;
+				const cubeGeo = new THREE.BoxGeometry( cubeSize*15, cubeSize, cubeSize );
+				const cubeMat = new THREE.MeshPhongMaterial( { color: '#000000' } );
+				cube = new THREE.Mesh( cubeGeo, cubeMat );
+				cube1 = new THREE.Mesh( cubeGeo, cubeMat );
+				cube2 = new THREE.Mesh( cubeGeo, cubeMat );
+				cube3 = new THREE.Mesh( cubeGeo, cubeMat );
+				cube4 = new THREE.Mesh( cubeGeo, cubeMat );				
+				cube5 = new THREE.Mesh( cubeGeo, cubeMat );
+				cube6 = new THREE.Mesh( cubeGeo, cubeMat );
+				cube7 = new THREE.Mesh( cubeGeo, cubeMat );
+				cube8 = new THREE.Mesh( cubeGeo, cubeMat );				
+				cube9 = new THREE.Mesh( cubeGeo, cubeMat );
+				cube10 = new THREE.Mesh( cubeGeo, cubeMat );
+				cube11= new THREE.Mesh( cubeGeo, cubeMat );
+
+				
+				cube.position.set(4.6, 41, -3.5 );
+				cube1.position.set(-14.4, 41, -3.5 );
+				cube2.position.set(-14.4, 41, -17.4 );
+				cube3.position.set(4.6, 41, -17.4 );
+
+				cube4.rotation.y=45;
+				cube5.rotation.y=45;
+				cube6.rotation.y=45;
+				cube7.rotation.y=45;
+				cube4.position.set(4.6, 41, -3.5 );
+				cube5.position.set(-14.4, 41, -3.5 );
+				cube6.position.set(-14.4, 41, -17.4 );
+				cube7.position.set(4.6, 41, -17.4 );
+
+				cube8.rotation.y=90;
+				cube9.rotation.y=90;
+				cube10.rotation.y=90;
+				cube11.rotation.y=90;
+				cube8.position.set(4.6, 41, -3.5 );
+				cube9.position.set(-14.4, 41, -3.5 );
+				cube10.position.set(-14.4, 41, -17.4 );
+				cube11.position.set(4.6, 41, -17.4 );
+
+				//cube.rotation.x = 13;
+				scene.add( cube );
+				scene.add( cube1 );
+				scene.add( cube2 );
+				scene.add( cube3 );
+				scene.add( cube4 );
+				scene.add( cube5 );
+				scene.add( cube6 );
+				scene.add( cube7 );
+				scene.add( cube8 );
+				scene.add( cube9 );
+				scene.add( cube10 );
+				scene.add( cube11 );
+			}
+			
+
+
 		//lighting
 		{
 
 			const color = 0xffeca1;
-			const intensity = 2;
+			const intensity = 3;
 			//light 1
 			const light = new THREE.DirectionalLight(color, intensity);
+			const light2 = new THREE.DirectionalLight(0x008080, 3);
+
 			//light 2
 			const alight = new THREE.AmbientLight(0x101647, .01);
 			//light 3
 			const hlight = new THREE.HemisphereLight(0xB1E1FF, 0x101647, .01);
+			
 			scene.add(alight);
+			scene.add(light2);
 			scene.add(hlight);
-			light.position.set(0, 10, 0);
-			light.target.position.set(- 5, 0, 0);
+			light.position.set(180, 10, 0);
+			light2.position.set(-170, 5, -600);
+			light2.target.position.set(-5, 4, 10);
+			light.target.position.set(-5, 4, 10);
 			scene.add(light);
 			scene.add(light.target);
 
@@ -174,9 +230,10 @@
 			return needResize;
 
 		}
-
+		
 		function render() {
 
+			
 			if (resizeRendererToDisplaySize(renderer)) {
 
 				const canvas = renderer.domElement;
@@ -184,15 +241,30 @@
 				camera.updateProjectionMatrix();
 
 			}
+			
 			//makes water move.. got help from this example https://github.com/mrdoob/three.js/blob/dev/examples/webgl_shaders_ocean.html
 			water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
+			
+			//propeller animations
+			cube.rotation.y += 0.4;
+			cube1.rotation.y += 0.4;
+			cube2.rotation.y += 0.4;
+			cube3.rotation.y += 0.4;
+			cube4.rotation.y += 0.4;
+			cube5.rotation.y += 0.4;
+			cube6.rotation.y += 0.4;
+			cube7.rotation.y += 0.4;
+			cube8.rotation.y += 0.4;
+			cube9.rotation.y += 0.4;
+			cube10.rotation.y += 0.4;
+			cube11.rotation.y += 0.4;
+
 			renderer.render(scene, camera);
 			requestAnimationFrame(render);
 
 		}
 
 		requestAnimationFrame(render);
-
 	}
 
 	main();
