@@ -111,7 +111,7 @@
 			scene.background = texture;
 		}
 
-		let object1;
+		const object1=[];
 		{// drone obj and mtl. Got from this source https://www.cgtrader.com/items/2480872/download-page
 			const mtlLoader = new MTLLoader();
 			mtlLoader.load('drone.mtl', (mtl) => {
@@ -123,8 +123,9 @@
 					root.position.x = -5;
 					root.position.z = -10;
 					root.scale.set(25, 25, 25)
-					object1=root;
+					//object1=root;
 					scene.add(root);
+					object1.push(root);
 				});
 
 			});
@@ -359,19 +360,22 @@
 			cameraBox.position.x += varMove;
 			cameraBox.position.z += varMove*2.5
 
+			// the only way I could get this to work
 			spheres.forEach( ( cameraBox2, ndx ) => {
 				cameraBox2.rotation.y += 0.01;
 				cameraBox2.position.x += varMove;
 				cameraBox2.position.z += varMove*2.5;
 			});
-
-			object1.position.x += varMove;
-			object1.position.z += varMove*2.5;
+			
+			object1.forEach( ( root, ndx ) => {
+				root.position.x += varMove;
+				root.position.z += varMove*2.5;
+				controls.target.set(root.position.x, root.position.y, root.position.z);
+				controls.update();
+			});
 
 			dHeight+=varMove;
 			
-			controls.target.set(object1.position.x, object1.position.y, object1.position.z);
-			controls.update();
 
 			// got this idea from this example https://github.com/mrdoob/three.js/blob/dev/examples/webgl_shaders_ocean.html
 			const time = performance.now() * 0.001;
