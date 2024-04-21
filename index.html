@@ -12,7 +12,29 @@
 		height: 100%;
 		margin: 0;
 	}
+	.button{
+		position: absolute;
+		font-size: 20px;
+		background-color: #095181;
+		padding:5px;
+		color: white;
+		display: block;
+		z-index: 99;
+		right: 15.3%;
+		top: 90%;
+    }
+	.button1{
+		right: 6%;
+	}
+	.button:active {
+		background-color: #3e8e41;
+		box-shadow: 0 5px #666;
+		transform: translateY(4px);
+	}
+	.button:hover {
+		background-color: #042135;
 
+	}
 	#c {
 		width: 100%;
 		height: 100%;
@@ -21,6 +43,8 @@
 </style>
 
 <body>
+	<button id="start" class="button">Start Drone</button>
+	<button id="stop" class="button button1">Stop Drone</button>
 	<canvas id="c"></canvas>
 </body>
 <script type="importmap">{
@@ -38,9 +62,8 @@
 	import { OBJLoader } from 'three/addons/loaders/OBJLoader.js';
 	import { MTLLoader } from 'three/addons/loaders/MTLLoader.js';
 
-
+		//used this resource for button css https://stackoverflow.com/questions/47297794/how-to-overlay-html-text-buttons-on-three-js
 	function main() {
-
 		const canvas = document.querySelector('#c');
 		//const renderer = new THREE.WebGLRenderer( { antialias: true, canvas } );
 		// want to use skybox 
@@ -65,6 +88,7 @@
 		//controls.minDistance = 40.0;
 		controls.maxDistance = 200;
 		controls.update();
+
 
 		const scene = new THREE.Scene();
 		const waterGeometry = new THREE.PlaneGeometry(20000, 20000);
@@ -290,37 +314,22 @@
 			return needResize;
 
 		}
-		
-		function render() {
+		function animationOfDrone(varMove){
+			// the only way I could get this to work -> to move the camera
+			//let varMove= -.1;
+			spheres.forEach( ( cameraBox2, ndx ) => {
+				cameraBox2.rotation.y += 0.01;
+				cameraBox2.position.x += varMove;
+				cameraBox2.position.z += varMove*2.5;
+			});
+			// moves the drone
+			object1.forEach( ( root, ndx ) => {
+				root.position.x += varMove;
+				root.position.z += varMove*2.5;
+				controls.target.set(root.position.x, root.position.y, root.position.z);
+				controls.update();
+			});
 
-			
-			if (resizeRendererToDisplaySize(renderer)) {
-
-				const canvas = renderer.domElement;
-				camera.aspect = canvas.clientWidth / canvas.clientHeight;
-				camera.updateProjectionMatrix();
-
-			}
-			
-			//makes water move.. got help from this example https://github.com/mrdoob/three.js/blob/dev/examples/webgl_shaders_ocean.html
-			water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
-			
-			//propeller animations
-			cube.rotation.y += 0.4;
-			cube1.rotation.y += 0.4;
-			cube2.rotation.y += 0.4;
-			cube3.rotation.y += 0.4;
-			cube4.rotation.y += 0.4;
-			cube5.rotation.y += 0.4;
-			cube6.rotation.y += 0.4;
-			cube7.rotation.y += 0.4;
-			cube8.rotation.y += 0.4;
-			cube9.rotation.y += 0.4;
-			cube10.rotation.y += 0.4;
-			cube11.rotation.y += 0.4;
-			cameraBox.rotation.y += 0.01;
-			
-			let varMove= -.1;
 			cube.position.x += varMove;
 			cube.position.z += varMove*2.5;
 
@@ -360,23 +369,49 @@
 			cameraBox.position.x += varMove;
 			cameraBox.position.z += varMove*2.5
 
-			// the only way I could get this to work
-			spheres.forEach( ( cameraBox2, ndx ) => {
-				cameraBox2.rotation.y += 0.01;
-				cameraBox2.position.x += varMove;
-				cameraBox2.position.z += varMove*2.5;
-			});
-			
-			object1.forEach( ( root, ndx ) => {
-				root.position.x += varMove;
-				root.position.z += varMove*2.5;
-				controls.target.set(root.position.x, root.position.y, root.position.z);
-				controls.update();
-			});
-
 			dHeight+=varMove;
-			
 
+		}
+		let startOn=0;
+		document.getElementById('start').onclick = function () {startOn=1;};
+		document.getElementById('stop').onclick = function () {startOn=0;};
+
+		function render() {
+
+			
+			if (resizeRendererToDisplaySize(renderer)) {
+
+				const canvas = renderer.domElement;
+				camera.aspect = canvas.clientWidth / canvas.clientHeight;
+				camera.updateProjectionMatrix();
+
+			}
+			
+			//makes water move.. got help from this example https://github.com/mrdoob/three.js/blob/dev/examples/webgl_shaders_ocean.html
+			water.material.uniforms[ 'time' ].value += 1.0 / 60.0;
+			
+			//propeller animations (to spin)
+			cube.rotation.y += 0.4;
+			cube1.rotation.y += 0.4;
+			cube2.rotation.y += 0.4;
+			cube3.rotation.y += 0.4;
+			cube4.rotation.y += 0.4;
+			cube5.rotation.y += 0.4;
+			cube6.rotation.y += 0.4;
+			cube7.rotation.y += 0.4;
+			cube8.rotation.y += 0.4;
+			cube9.rotation.y += 0.4;
+			cube10.rotation.y += 0.4;
+			cube11.rotation.y += 0.4;
+			cameraBox.rotation.y += 0.01;
+			
+			//animating moving the drone 
+			if(startOn==1){
+				animationOfDrone(-.1);
+			}
+			if(startOn==0){
+				animationOfDrone(0);
+			}
 			// got this idea from this example https://github.com/mrdoob/three.js/blob/dev/examples/webgl_shaders_ocean.html
 			const time = performance.now() * 0.001;
 
@@ -406,9 +441,7 @@
 
 			renderer.render(scene, camera);
 			requestAnimationFrame(render);
-
 		}
-
 		requestAnimationFrame(render);
 	}
 
