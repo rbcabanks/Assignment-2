@@ -192,6 +192,7 @@
 			// creating the rotating camera
 			//13 and 14
 			let cameraBox,cameraBox2;
+			const spheres = []; 
 			{
 
 				//added texture to the camera sphere
@@ -203,21 +204,21 @@
 					const material = new THREE.MeshBasicMaterial({
 						map: texture,
 						});
-					/*cameraBox2 = new THREE.Mesh(sphereGeo, material);
+					cameraBox2 = new THREE.Mesh(sphereGeo, material);
 					cameraBox2.position.set(-5.1, dHeight+34.8, -3.4 );
-					scene.add(cameraBox2);*/
-					mat=material;
+					scene.add(cameraBox2);
+					spheres.push(cameraBox2);
 
 				});
 				const cubeSize = 1.2;
 				const cubeGeo = new THREE.BoxGeometry( cubeSize, cubeSize, cubeSize );
 				const cubeMat = new THREE.MeshPhongMaterial( { color: '#000000' } );
-				const sphere = new THREE.MeshPhongMaterial(mat);
+				//const sphere = new THREE.MeshPhongMaterial(mat);
 				cameraBox = new THREE.Mesh( cubeGeo, cubeMat );
-				cameraBox2 = new THREE.Mesh( sphereGeo, sphere );
+				//cameraBox2 = new THREE.Mesh( sphereGeo, sphere );
 				cameraBox.position.set(-5.1, dHeight+34.8, -4 );
 				scene.add(cameraBox);
-				scene.add(cameraBox2);
+				//scene.add(cameraBox2);
 
 			}
 
@@ -317,7 +318,6 @@
 			cube10.rotation.y += 0.4;
 			cube11.rotation.y += 0.4;
 			cameraBox.rotation.y += 0.01;
-			cameraBox2.rotation.y += 0.01;
 			
 			let varMove= -.1;
 			cube.position.x += varMove;
@@ -359,9 +359,11 @@
 			cameraBox.position.x += varMove;
 			cameraBox.position.z += varMove*2.5
 
-			cameraBox2.position.x += varMove;
-			cameraBox2.position.z += varMove*2.5;
-
+			spheres.forEach( ( cameraBox2, ndx ) => {
+				cameraBox2.rotation.y += 0.01;
+				cameraBox2.position.x += varMove;
+				cameraBox2.position.z += varMove*2.5;
+			});
 
 			object1.position.x += varMove;
 			object1.position.z += varMove*2.5;
